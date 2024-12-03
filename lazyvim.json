@@ -1,6 +1,14 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.ui.edgy"
+    "lazyvim.plugins.extras.ai.copilot",
+    "lazyvim.plugins.extras.ai.copilot-chat",
+    "lazyvim.plugins.extras.editor.outline",
+    "lazyvim.plugins.extras.formatting.prettier",
+    "lazyvim.plugins.extras.lang.typescript",
+    "lazyvim.plugins.extras.lang.vue",
+    "lazyvim.plugins.extras.linting.eslint",
+    "lazyvim.plugins.extras.ui.edgy",
+    "lazyvim.plugins.extras.util.octo"
   ],
   "news": {
     "NEWS.md": "7429"

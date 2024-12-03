@@ -16,6 +16,7 @@ return {
           if cmp.visible() then
             -- You could replace select_next_item() with confirm({ select = true }) to get VS Code autocompletion behavior
             cmp.select_next_item()
+          -- elseif vim.fn["copilot#Accept"]() ~= "" then
           elseif vim.snippet.active({ direction = 1 }) then
             vim.schedule(function()
               vim.snippet.jump(1)
@@ -26,6 +27,8 @@ return {
             fallback()
           end
         end, { "i", "s" }),
+        -- Copilot integration
+        -- ["<CR>"] = cmp.mapping.confirm({ select = true }),
         ["<S-Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_prev_item()
@@ -37,6 +40,18 @@ return {
             fallback()
           end
         end, { "i", "s" }),
+      })
+    end,
+  },
+  {
+    "nvim-cmp",
+    optional = true,
+    ---@param opts cmp.ConfigSchema
+    opts = function(_, opts)
+      table.insert(opts.sources, 1, {
+        name = "copilot",
+        group_index = 1,
+        priority = 100,
       })
     end,
   },

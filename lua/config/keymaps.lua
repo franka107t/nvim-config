@@ -27,7 +27,7 @@ vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
 
 vim.keymap.set(
   "n",
-  "<leader>ft",
+  "<leader>ut",
   "<cmd>:ToggleTerm direction=float<CR>",
   { noremap = true, silent = true, desc = "Open toggle terminal" }
 )
@@ -81,6 +81,14 @@ set_keymap(
   "<cmd>lua require('package-info').change_version()<cr>",
   { silent = true, noremap = true, desc = "Change package version" }
 )
+
+-- Disable autocomment next line
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function()
+    vim.opt.formatoptions:remove({ "c", "r", "o" })
+  end,
+  desc = "Disable New Line Comment",
+})
 
 -- Gitsigns
 -- local gs = require("gitsigns")

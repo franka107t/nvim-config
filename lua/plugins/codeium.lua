@@ -1,0 +1,47 @@
+if true then
+  return {}
+end
+-- return {
+--   {
+--     "hrsh7th/nvim-cmp",
+--     dependencies = {
+--       -- codeium
+--       {
+--         "Exafunction/codeium.nvim",
+--         cmd = "Codeium",
+--         build = ":Codeium Auth",
+--         opts = {},
+--       },
+--     },
+--     ---@param opts cmp.ConfigSchema
+--     opts = function(_, opts)
+--       table.insert(opts.sources, 2, {
+--         name = "codeium",
+--         group_index = 2,
+--         priority = 50,
+--       })
+--     end,
+--   },
+--
+--   --codeium inline
+--   {
+--     "Exafunction/codeium.vim",
+--     config = function()
+--       vim.keymap.set("i", "<C-g>", function()
+--         return vim.fn["codeium#Accept"]()
+--       end, { expr = true })
+--       vim.keymap.set("i", "<C-l>", function()
+--         return vim.fn["codeium#CycleCompletions"](1)
+--       end, { expr = true })
+--       vim.keymap.set("i", "<C-M>", function()
+--         return vim.fn["codeium#Complete"]()
+--       end, { expr = true })
+--       vim.keymap.set("i", "<C-x>", function()
+--         return vim.fn["codeium#Clear"]()
+--       end, { expr = true })
+--       -- vim.g.codeium_filetypes = {
+--       --   markdown = true,
+--       -- }
+--     end,
+--   },
+-- }

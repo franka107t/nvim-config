@@ -1,68 +1,178 @@
--- if true then
---   return {}
--- end
+if true then
+  return {}
+end
 
 return {
   {
     "folke/edgy.nvim",
     optional = true,
-    opts = {
-      animate = {
-        enabled = false,
+    keys = {
+      {
+        "<leader>uo",
+        "<cmd>Outline<cr>",
+        desc = "Toggle Outline",
       },
-      left = {
-        -- Neo-tree filesystem always takes half the screen height
+    },
+    opts = function(_, opts)
+      opts.animate = opts.animate or { enabled = false }
+      opts.right = {
+        {
+          title = function()
+            local buf_name = vim.api.nvim_buf_get_name(0) or "[No Name]"
+            return vim.fn.fnamemodify(buf_name, ":t")
+          end,
+          ft = "Outline",
+          pinned = false,
+          open = "Outline",
+        },
+        {
+          ft = "CopilotChat",
+          title = "Copilot Chat",
+          size = { width = 50 },
+        },
+        {
+          ft = "copilot-chat",
+          title = "Copilot Chat",
+          size = { width = 50 },
+        },
+      }
+
+      -- table.insert(opts.right, {
+      --   ft = "copilot-chat",
+      --   title = "Copilot Chat",
+      --   size = { width = 50 },
+      -- })
+
+      opts.left = {
         {
           title = "Neo-Tree",
           ft = "neo-tree",
           filter = function(buf)
             return vim.b[buf].neo_tree_source == "filesystem"
           end,
-          size = { height = 0.5 },
+          size = { height = 0.7 },
+          pinned = true,
         },
+        "neo-tree", -- any other neo-tree windows
+      }
 
-        -- any other neo-tree windows
-        "neo-tree",
-      },
-      bottom = {
-        -- toggleterm / lazyterm at the bottom with a height of 40% of the screen
-        {
-          ft = "toggleterm",
-          title = "Terminal",
-          size = { height = 0.4 },
-          -- exclude floating windows
-          filter = function(buf, win)
-            return vim.api.nvim_win_get_config(win).relative == ""
-          end,
-        },
-        {
-          ft = "noice",
-          size = { height = 0.4 },
-          filter = function(buf, win)
-            return vim.api.nvim_win_get_config(win).relative == ""
-          end,
-        },
-        {
-          ft = "lazyterm",
-          title = "LazyTerm",
-          size = { height = 0.4 },
-          filter = function(buf)
-            return not vim.b[buf].lazyterm_cmd
-          end,
-        },
-        "Trouble",
-        { ft = "qf", title = "QuickFix" },
-        {
-          ft = "help",
-          size = { height = 20 },
-          -- only show help buffers
-          filter = function(buf)
-            return vim.bo[buf].buftype == "help"
-          end,
-        },
-        { ft = "spectre_panel", size = { height = 0.4 } },
-      },
-    },
+      opts.bottom = opts.bottom
+        or {
+          {
+            ft = "toggleterm",
+            title = "Terminal",
+            size = { height = 0.4 },
+            filter = function(buf, win)
+              return vim.api.nvim_win_get_config(win).relative == ""
+            end,
+          },
+          {
+            ft = "noice",
+            size = { height = 0.4 },
+            filter = function(buf, win)
+              return vim.api.nvim_win_get_config(win).relative == ""
+            end,
+          },
+          {
+            ft = "lazyterm",
+            title = "LazyTerm",
+            size = { height = 0.4 },
+            filter = function(buf)
+              return not vim.b[buf].lazyterm_cmd
+            end,
+          },
+          "Trouble",
+          { ft = "qf", title = "QuickFix" },
+          {
+            ft = "help",
+            size = { height = 20 },
+            filter = function(buf)
+              return vim.bo[buf].buftype == "help"
+            end,
+          },
+          { ft = "spectre_panel", size = { height = 0.4 } },
+        }
+    end,
+    -- opts2 = {
+    --   animate = {
+    --     enabled = false,
+    --   },
+    --   right = {
+    --
+    --     {
+    --       title = function()
+    --         local buf_name = vim.api.nvim_buf_get_name(0) or "[No Name]"
+    --         return vim.fn.fnamemodify(buf_name, ":t")
+    --       end,
+    --       ft = "Outline",
+    --       pinned = false,
+    --       open = "Outline",
+    --     },
+    --   },
+    --   left = {
+    --     -- Neo-tree filesystem always takes half the screen height
+    --     {
+    --       title = "Neo-Tree",
+    --       ft = "neo-tree",
+    --       filter = function(buf)
+    --         return vim.b[buf].neo_tree_source == "filesystem"
+    --       end,
+    --       size = { height = 0.7 },
+    --       pinned = true,
+    --     },
+    --
+    --     -- {
+    --     --   title = function()
+    --     --     local buf_name = vim.api.nvim_buf_get_name(0) or "[No Name]"
+    --     --     return vim.fn.fnamemodify(buf_name, ":t")
+    --     --   end,
+    --     --   ft = "Outline",
+    --     --   pinned = false,
+    --     --   open = "OutlineOpen",
+    --     -- },
+    --
+    --     -- any other neo-tree windows
+    --     "neo-tree",
+    --   },
+    --   bottom = {
+    --     -- toggleterm / lazyterm at the bottom with a height of 40% of the screen
+    --     {
+    --       ft = "toggleterm",
+    --       title = "Terminal",
+    --       size = { height = 0.4 },
+    --       -- exclude floating windows
+    --       filter = function(buf, win)
+    --         return vim.api.nvim_win_get_config(win).relative == ""
+    --       end,
+    --     },
+    --     {
+    --       ft = "noice",
+    --       size = { height = 0.4 },
+    --       filter = function(buf, win)
+    --         return vim.api.nvim_win_get_config(win).relative == ""
+    --       end,
+    --     },
+    --     {
+    --       ft = "lazyterm",
+    --       title = "LazyTerm",
+    --       size = { height = 0.4 },
+    --       filter = function(buf)
+    --         return not vim.b[buf].lazyterm_cmd
+    --       end,
+    --     },
+    --     "Trouble",
+    --     { ft = "qf", title = "QuickFix" },
+    --     {
+    --       ft = "help",
+    --       size = { height = 20 },
+    --       -- only show help buffers
+    --       filter = function(buf)
+    --         return vim.bo[buf].buftype == "help"
+    --       end,
+    --     },
+    --     { ft = "spectre_panel", size = { height = 0.4 } },
+    --   },
+    -- },
   },
   {
     "nvim-telescope/telescope.nvim",
