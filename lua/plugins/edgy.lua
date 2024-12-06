@@ -1,7 +1,7 @@
-if true then
-  return {}
-end
-
+-- if true then
+--   return {}
+-- end
+--
 return {
   {
     "folke/edgy.nvim",
@@ -14,28 +14,18 @@ return {
       },
     },
     opts = function(_, opts)
-      opts.animate = opts.animate or { enabled = false }
-      opts.right = {
-        {
-          title = function()
-            local buf_name = vim.api.nvim_buf_get_name(0) or "[No Name]"
-            return vim.fn.fnamemodify(buf_name, ":t")
-          end,
-          ft = "Outline",
-          pinned = false,
-          open = "Outline",
-        },
-        {
-          ft = "CopilotChat",
-          title = "Copilot Chat",
-          size = { width = 50 },
-        },
-        {
-          ft = "copilot-chat",
-          title = "Copilot Chat",
-          size = { width = 50 },
-        },
-      }
+      opts.animate = { enabled = false }
+      -- opts.right = {
+      --   {
+      --     title = function()
+      --       local buf_name = vim.api.nvim_buf_get_name(0) or "[No Name]"
+      --       return vim.fn.fnamemodify(buf_name, ":t")
+      --     end,
+      --     ft = "Outline",
+      --     pinned = false,
+      --     open = "Outline",
+      --   },
+      -- }
 
       -- table.insert(opts.right, {
       --   ft = "copilot-chat",

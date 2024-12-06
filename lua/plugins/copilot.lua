@@ -1,7 +1,4 @@
 -- This file contains the configuration for integrating GitHub Copilot and Copilot Chat plugins in Neovim.
-if true then
-  return {}
-end
 
 -- Define prompts for Copilot
 -- This table contains various prompts that can be used to interact with Copilot.
@@ -29,49 +26,20 @@ local prompts = {
 -- This table contains the configuration for various plugins used in Neovim.
 return {
   -- GitHub Copilot plugin
-  -- { "github/copilot.vim" }, -- Load the GitHub Copilot plugin
+  --{ "github/copilot.vim" }, -- Load the GitHub Copilot plugin
   -- {
-  --   "zbirenbaum/copilot.lua",
-  --   cmd = "Copilot",
-  --   build = ":Copilot auth",
-  --   event = "InsertEnter",
-  --   opts = {
-  --     suggestion = {
-  --       enabled = not vim.g.ai_cmp,
-  --       auto_trigger = true,
-  --       keymap = {
-  --         accept = false, -- handled by nvim-cmp / blink.cmp
-  --         next = "<A-]>",
-  --         prev = "<A-[>",
-  --       },
-  --       -- keymap = {
-  --       --   jump_prev = "[[",
-  --       --   jump_next = "]]",
-  --       --   accept = "<CR>",
-  --       --   refresh = "gr",
-  --       --   open = "<M-CR>",
-  --       -- },
-  --     },
-  --     panel = { enabled = false },
-  --     filetypes = {
-  --       markdown = true,
-  --       help = true,
-  --     },
-  --   },
-  -- },
+  --   "github/copilot.vim",
+  --   config = function()
   --
-  -- {
-  --   "zbirenbaum/copilot.lua",
-  --   opts = function()
-  --     LazyVim.cmp.actions.ai_accept = function()
-  --       if require("copilot.suggestion").is_visible() then
-  --         LazyVim.create_undo()
-  --         require("copilot.suggestion").accept()
-  --         return true
-  --       end
-  --     end
+  --     -- vim.g.copilot_no_tab_map = true
+  --     --vim.api.nvim_set_keymap("i", "<C-j>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+  --     --vim.api.nvim_set_keymap("i", "<C-j>", "v:lua.copilot#Accept('<CR>')", { silent = true, expr = true })
+  --     -- vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
+  --     --vim.api.nvim_set_keymap(“i”, “<Tab>”, "copilot#Accept(“<Tab>”)", { silent = true, expr = true })
+  --     --vim.api.nvim_set_keymap(“i”, “<C-e>”, "copilot#Dismiss()", { silent = true, expr = true })
   --   end,
   -- },
+
   -- Which-key plugin configuration
   {
     "folke/which-key.nvim", -- Load the which-key plugin
@@ -104,6 +72,20 @@ return {
       prompts = prompts, -- Use the defined prompts
       auto_follow_cursor = false, -- Disable auto-follow cursor
       show_help = false, -- Disable showing help by default
+
+      window = {
+        layout = "float", -- 'vertical', 'horizontal', 'float', 'replace'
+        width = 0.5, -- fractional width of parent, or absolute width in columns when > 1
+        height = 0.5, -- fractional height of parent, or absolute height in rows when > 1
+        -- Options below only apply to floating windows
+        relative = "editor", -- 'editor', 'win', 'cursor', 'mouse'
+        border = "single", -- 'none', single', 'double', 'rounded', 'solid', 'shadow'
+        row = nil, -- row position of the window, default is centered
+        col = nil, -- column position of the window, default is centered
+        title = "El copiloto", -- title of chat window
+        footer = nil, -- footer of chat window
+        zindex = 1, -- determines if window is on top or below other floating windows
+      },
       mappings = {
         complete = { detail = "Use @<Tab> or /<Tab> for options.", insert = "<Tab>" }, -- Keybinding for completion
         close = { normal = "q", insert = "<C-c>" }, -- Keybinding to close chat
@@ -113,8 +95,7 @@ return {
         yank_diff = { normal = "gmy" }, -- Keybinding to yank diff
         show_diff = { normal = "gmd" }, -- Keybinding to show diff
         show_system_prompt = { normal = "gmp" }, -- Keybinding to show system prompt
-        show_user_selection = { normal = "gms" }, -- Keybinding to show user selection
-        show_help = { normal = "gmh" }, -- Keybinding to show help
+        show_user_selection = { normal = "gms" }, -- Keybinding to show user selection show_help = { normal = "gmh" }, -- Keybinding to show help
       },
     },
     config = function(_, opts)
@@ -207,6 +188,7 @@ return {
       { "<leader>aR", "<cmd>CopilotChatRefactor<cr>", desc = "CopilotChat - Refactor code" },
       { "<leader>an", "<cmd>CopilotChatBetterNamings<cr>", desc = "CopilotChat - Better Naming" },
       { "<leader>av", ":CopilotChatVisual", mode = "x", desc = "CopilotChat - Open in vertical split" },
+      { "<leader>aa", "<cmd>CopilotChatToggle<cr>", desc = "CopilotChat - Open in vertical split" },
       { "<leader>ax", ":CopilotChatInline<cr>", mode = "x", desc = "CopilotChat - Inline chat" },
       {
         "<leader>ai",
@@ -242,53 +224,30 @@ return {
     },
   },
   {
-    "nvim-lualine/lualine.nvim",
-    optional = true,
-    event = "VeryLazy",
-    opts = function(_, opts)
-      table.insert(
-        opts.sections.lualine_x,
-        2,
-        LazyVim.lualine.status(LazyVim.config.icons.kinds.Copilot, function()
-          local clients = package.loaded["copilot"] and LazyVim.lsp.get_clients({ name = "copilot", bufnr = 0 }) or {}
-          if #clients > 0 then
-            local status = require("copilot.api").status.data.status
-            return (status == "InProgress" and "pending") or (status == "Warning" and "error") or "ok"
-          end
-        end)
-      )
-    end,
-  },
-  {
-    "nvim-cmp",
-    optional = true,
-    dependencies = { -- this will only be evaluated if nvim-cmp is enabled
-      {
-        "zbirenbaum/copilot-cmp",
-        enabled = vim.g.ai_cmp, -- only enable if wanted
-        opts = {},
-        config = function(_, opts)
-          local copilot_cmp = require("copilot_cmp")
-          copilot_cmp.setup(opts)
-          -- attach cmp source whenever copilot attaches
-          -- fixes lazy-loading issues with the copilot cmp source
-          LazyVim.lsp.on_attach(function()
-            copilot_cmp._on_insert_enter({})
-          end, "copilot")
-        end,
-        specs = {
-          {
-            "nvim-cmp",
-            optional = true,
-            ---@param opts cmp.ConfigSchema
-            opts = function(_, opts)
-              table.insert(opts.sources, 1, {
-                name = "copilot",
-                group_index = 1,
-                priority = 100,
-              })
-            end,
-          },
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    build = ":Copilot auth",
+    event = "InsertEnter",
+    opts = {
+      -- suggestion = {
+      --   enabled = not vim.g.ai_cmp,
+      --   auto_trigger = true,
+      --   keymap = {
+      --     accept = false, -- handled by nvim-cmp / blink.cmp
+      --     next = "<M-]>",
+      --     prev = "<M-[>",
+      --   },
+      -- },
+      suggestion = {
+        -- enabled = not vim.g.ai_cmp,
+        auto_trigger = true,
+        keymap = {
+          accept = "<C-j>",
+          accept_line = "<C-l>",
+          accept_word = "<C-k>",
+          next = "<C-]>",
+          prev = "<C-[>",
+          dismiss = "<C-c>",
         },
       },
     },
